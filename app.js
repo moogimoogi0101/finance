@@ -19,6 +19,25 @@ var uiController = (function () {
     getDOMstrings: function () {
       return DOMstrings;
     },
+    addListItem: function (item, type) {
+      // Орлого зарлагын элементийг агуулсан html бэлтгэнэ.
+      var html, list;
+      if (type === "inc") {
+        list = ".income__list";
+        html =
+          '<div class="item clearfix" id="income-%id%"><div class="item__description">%DESCRIPTION%</div> <div class="right clearfix"> <div class="item__value">%VALUE%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div></div>';
+      } else {
+        list = ".expenses__list";
+        html =
+          '<div class="item clearfix" id="expense-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
+      }
+      //  Тэр Html дотроо орлого зарлагуудыг replace ашиглаж өөрчилж өгнө.
+      html = html.replace("%id%", item.id);
+      html = html.replace("%DESCRIPTION%", item.description);
+      html = html.replace("%VALUE%", item.value);
+      // Бэлтгэсэн HTML ээ DOM руу хийж өгнө.
+      document.querySelector(list).insertAdjacentHTML("beforeend", html);
+    },
   };
 })();
 // -----------------------------------------------------------//
@@ -56,7 +75,7 @@ var financeController = (function () {
   };
 
   return {
-    addItems: function (type, desc, val) {
+    addItem: function (type, desc, val) {
       var item, id;
 
       if (data.items[type].length === 0) id = 1;
@@ -70,6 +89,8 @@ var financeController = (function () {
         item = new Expense(id, desc, val);
       }
       data.items[type].push(item);
+
+      return item;
     },
 
     seeData: function () {
@@ -85,8 +106,14 @@ var appController = (function (uiController, financeController) {
     var input = uiController.getInput();
 
     // 2 olj avsan ugudluudee sanhuugin controllert damjuulj tend hadgalna
-    financeController.addItems(input.type, input.description, input.value);
+    var item = financeController.addItem(
+      input.type,
+      input.description,
+      input.value
+    );
     // 3 olj avsn ugudluude web deer gargana
+    uiController.addListItem(item, input.type);
+
     // 4 tusuviig tootsoolno
     // 5 etssiin uldegdeliig delgetsed gargana
   };
