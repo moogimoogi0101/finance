@@ -49,8 +49,23 @@ var uiController = (function () {
         today.getFullYear() +
         " оны " +
         today.getMonth() +
-        "-сарын өрхийн төсөв";
+        " сарын өрхийн төсөв";
     },
+
+    changeType: function () {
+      var fields = document.querySelectorAll(
+        DOMstrings.inputType +
+          ", " +
+          DOMstrings.inputDescription +
+          "," +
+          DOMstrings.inputValue
+      );
+      nodeListForEach(fields, function (el) {
+        el.classList.toggle("red-focus");
+      });
+      document.querySelector(DOMstrings.addBtn).classList.toggle("red");
+    },
+
     getInput: function () {
       return {
         type: document.querySelector(DOMstrings.inputType).value,
@@ -323,6 +338,11 @@ var appController = (function (uiController, financeController) {
         ctrlAddItem();
       }
     });
+
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", uiController.changeType);
+
     document
       .querySelector(DOM.containerDiv)
       .addEventListener("click", function (event) {
